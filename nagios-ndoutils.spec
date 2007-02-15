@@ -1,5 +1,6 @@
 %define		_beta	b2
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
+Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
 Version:	1.4
 Release:	0.1
@@ -19,6 +20,11 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 The NDOUTILS (Nagios Data Output Utils) addon allows you to move
 status and event information from Nagios to a database for later
 retrieval and processing.
+
+%description -l pl.UTF-8
+Dodatek NDOUTILS (Nagios Data Output Utils) pozwala przenosić
+informacje o stanie i zdarzeniach z Nagiosa do bazy danych w celu
+późniejszego odczytu i przetwarzania.
 
 %prep
 %setup -q -n ndoutils-%{version}%{_beta}
