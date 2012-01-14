@@ -7,7 +7,7 @@
 %bcond_without	ssl	# build without ssl support
 
 %define		extraver	b9
-%define		rel		0.4
+%define		rel		0.5
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
@@ -18,6 +18,7 @@ Group:		Networking
 Source0:	http://downloads.sourceforge.net/nagios/ndoutils-%{version}%{extraver}.tar.gz
 # Source0-md5:	659b759a5eb54b84eb44a29f26b603bc
 Source1:	ndo2db.init
+Patch0:		config.patch
 URL:		http://sourceforge.net/projects/nagios/
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ssl:BuildRequires:	openssl-devel}
@@ -43,6 +44,7 @@ późniejszego odczytu i przetwarzania.
 
 %prep
 %setup -q -n ndoutils-%{version}%{extraver}
+%patch0 -p1
 
 # some typo ;)
 grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
@@ -53,6 +55,7 @@ grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
 	%{?with_pgsql:--enable-pgsql} \
 	%{?with_ssl:--enable-ssl} \
 	--bindir=%{_sbindir} \
+	--localstatedir=/var/lib/nagios \
 	--with-init-dir=/etc/rc.d/init.d
 %{__make} -j1
 

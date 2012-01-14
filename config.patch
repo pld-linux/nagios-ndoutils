@@ -1,0 +1,20 @@
+--- ndoutils-1.4b9/config/ndo2db.cfg-sample.in	2009-09-15 15:08:32.000000000 +0300
++++ ndoutils-1.4b9/config/ndo2db.cfg-sample.in	2012-01-15 00:53:16.756690000 +0200
+@@ -10,7 +10,7 @@
+ # This is the lockfile that NDO2DB will use to store its PID number
+ # in when it is running in daemon mode.
+ 
+-lock_file=@localstatedir@/ndo2db.lock
++lock_file=@localstatedir@/ndo2db.pid
+ 
+ 
+ 
+@@ -177,7 +177,7 @@
+ # DEBUG FILE
+ # This option determines where the daemon should write debugging information.
+ 
+-debug_file=@localstatedir@/ndo2db.debug
++debug_file=/var/log/nagios/ndo2db.log
+ 
+ 
+ 

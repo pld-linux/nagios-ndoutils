@@ -40,7 +40,7 @@ fi
 
 # Set defaults
 configfile=/etc/nagios/ndo2db.cfg
-pidfile=/var/lib/nagios/ndo2db.lock
+pidfile=/var/lib/nagios/ndo2db.pid
 
 # Get service config - may override defaults
 [ -f /etc/sysconfig/ndo2db ] && . /etc/sysconfig/ndo2db
