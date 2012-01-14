@@ -1,5 +1,4 @@
 # TODO
-# - NDO2DB initscript (subpkg?)
 # - add db/{installdb,upgradedb} (Perl) somewhere
 #
 # Conditional build:
@@ -8,7 +7,7 @@
 %bcond_without	ssl	# build without ssl support
 
 %define		extraver	b9
-%define		rel		0.2
+%define		rel		0.3
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
@@ -18,6 +17,7 @@ License:	GPL v2
 Group:		Networking
 Source0:	http://downloads.sourceforge.net/nagios/ndoutils-%{version}%{extraver}.tar.gz
 # Source0-md5:	659b759a5eb54b84eb44a29f26b603bc
+Source1:	ndo2db.init
 URL:		http://sourceforge.net/projects/nagios/
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ssl:BuildRequires:	openssl-devel}
@@ -51,7 +51,7 @@ grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
 	%{?with_ssl:--enable-ssl} \
 	--bindir=%{_sbindir} \
 	--with-init-dir=/etc/rc.d/init.d
-%{__make}
+%{__make} -j1
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -62,6 +62,8 @@ install -d $RPM_BUILD_ROOT{%{_libdir},%{_sysconfdir},%{_sbindir}}
 	INIT_OPTS="" \
 	DESTDIR=$RPM_BUILD_ROOT
 
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/ndo2db
+
 mv $RPM_BUILD_ROOT{%{_sbindir},%{_libdir}}/ndomod.o
 
 for sample in $RPM_BUILD_ROOT%{_sysconfdir}/*-sample; do
@@ -69,11 +71,9 @@ for sample in $RPM_BUILD_ROOT%{_sysconfdir}/*-sample; do
 	mv $sample $cfg
 done
 
+# sample line that should be added to nagios.cfg for this module to work
 echo 'broker_module=%{_libdir}/ndomod.o config_file=%{_sysconfdir}/ndomod.cfg' \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/ndomod-load.cfg
-
-# daemon startup:
-# ndo2db -c %{_sysconfdir}/ndo2db.cfg
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -1,0 +1,114 @@
+#!/bin/sh
+#
+# Nagios NDO2DB Initscript
+#
+# chkconfig:	345 99 01
+#
+# description:	Nagios Data Out Daemon
+#
+# processname:	ndo2db
+# config:
+# pidfile:
+
+### BEGIN INIT INFO
+# Provides:          ndo2db
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Nagios NDO2DB Initscript
+# Description: 	     Nagios Data Out Daemon
+### END INIT INFO
+#
+# $Id$
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+		msg_network_down "Nagios NDO2DB"
+		exit 1
+	fi
+else
+	exit 0
+fi
+
+# Set defaults
+configfile=/etc/nagios/ndo2db.cfg
+pidfile=/var/lib/nagios/ndo2db.lock
+
+# Get service config - may override defaults
+[ -f /etc/sysconfig/ndo2db ] && . /etc/sysconfig/ndo2db
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/ndo2db ]; then
+		msg_already_running "Nagios NDO2DB"
+		return
+	fi
+
+	msg_starting "Nagios NDO2DB"
+	touch $pidfile
+	chown nagios:nagios $pidfile
+	daemon /usr/sbin/ndo2db -c $configfile
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ndo2db
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/ndo2db ]; then
+		msg_not_running "Nagios NDO2DB"
+		return
+	fi
+
+	# Stop daemons.
+	msg_stopping "Nagios NDO2DB"
+	killproc --pidfile $pidfile ndo2db -TERM
+	rm -f /var/lock/subsys/ndo2db
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/ndo2db ]; then
+		msg_not_running "Nagios NDO2DB"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
+	;;
+  status)
+	status --pidfile $pidfile ndo2db
+	RETVAL=$?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL
