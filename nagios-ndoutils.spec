@@ -7,7 +7,7 @@
 %bcond_without	ssl	# build without ssl support
 
 %define		extraver	b9
-%define		rel		0.3
+%define		rel		0.4
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
@@ -22,7 +22,10 @@ URL:		http://sourceforge.net/projects/nagios/
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ssl:BuildRequires:	openssl-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
+BuildRequires:	rpmbuild(macros) >= 1.228
 Requires:	nagios >= 3.0
+Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/nagios
@@ -77,6 +80,16 @@ echo 'broker_module=%{_libdir}/ndomod.o config_file=%{_sysconfdir}/ndomod.cfg' \
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/chkconfig --add ndo2db
+%service ndo2db restart
+
+%preun
+if [ "$1" = "0" ]; then
+	%service -q ndo2db stop
+	/sbin/chkconfig --del ndo2db
+fi
 
 %files
 %defattr(644,root,root,755)
