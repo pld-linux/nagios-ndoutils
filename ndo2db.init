@@ -53,8 +53,6 @@ start() {
 	fi
 
 	msg_starting "Nagios NDO2DB"
-	touch $pidfile
-	chown nagios:nagios $pidfile
 	daemon /usr/sbin/ndo2db -c $configfile
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/ndo2db
