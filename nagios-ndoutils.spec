@@ -1,8 +1,14 @@
 # TODO
 # - NDO2DB initscript (subpkg?)
 # - add db/{installdb,upgradedb} (Perl) somewhere
-%define		extraver	b7
-%define		rel		0.1
+#
+# Conditional build:
+%bcond_with	pgsql	# build without pgsql support (does not seem to work)
+%bcond_without	mysql	# build without mysql support
+%bcond_without	ssl	# build without ssl support
+
+%define		extraver	b9
+%define		rel		0.2
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
@@ -10,10 +16,12 @@ Version:	1.4
 Release:	0.%{extraver}.%{rel}
 License:	GPL v2
 Group:		Networking
-Source0:	http://dl.sourceforge.net/nagios/ndoutils-%{version}%{extraver}.tar.gz
-# Source0-md5:	a454f7434f401bd48047cc42b045ff8b
+Source0:	http://downloads.sourceforge.net/nagios/ndoutils-%{version}%{extraver}.tar.gz
+# Source0-md5:	659b759a5eb54b84eb44a29f26b603bc
 URL:		http://sourceforge.net/projects/nagios/
-BuildRequires:	mysql-devel
+%{?with_mysql:BuildRequires:	mysql-devel}
+%{?with_ssl:BuildRequires:	openssl-devel}
+%{?with_pgsql:BuildRequires:	postgresql-devel}
 Requires:	nagios >= 3.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -33,21 +41,36 @@ późniejszego odczytu i przetwarzania.
 %prep
 %setup -q -n ndoutils-%{version}%{extraver}
 
+# some typo ;)
+grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
+
 %build
-%configure
+%configure \
+	%{?with_mysql:--enable-mysql} \
+	%{?with_pgsql:--enable-pgsql} \
+	%{?with_ssl:--enable-ssl} \
+	--bindir=%{_sbindir} \
+	--with-init-dir=/etc/rc.d/init.d
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_sysconfdir},%{_sbindir}}
 
-install src/ndomod-3x.o $RPM_BUILD_ROOT%{_libdir}/ndomod.o
-cp -a config/ndomod.cfg $RPM_BUILD_ROOT%{_sysconfdir}
+%{__make} fullinstall \
+	INSTALL_OPTS="" \
+	INIT_OPTS="" \
+	DESTDIR=$RPM_BUILD_ROOT
+
+mv $RPM_BUILD_ROOT{%{_sbindir},%{_libdir}}/ndomod.o
+
+for sample in $RPM_BUILD_ROOT%{_sysconfdir}/*-sample; do
+	cfg=${sample%%-sample}
+	mv $sample $cfg
+done
+
 echo 'broker_module=%{_libdir}/ndomod.o config_file=%{_sysconfdir}/ndomod.cfg' \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/ndomod-load.cfg
-
-install src/ndo2db-3x $RPM_BUILD_ROOT%{_sbindir}/ndo2db
-cp -a config/ndo2db.cfg $RPM_BUILD_ROOT%{_sysconfdir}
 
 # daemon startup:
 # ndo2db -c %{_sysconfdir}/ndo2db.cfg
@@ -61,5 +84,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndo2db.cfg
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndomod-load.cfg
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndomod.cfg
-%{_libdir}/ndomod.o
+%attr(754,root,root) /etc/rc.d/init.d/ndo2db
+%attr(755,root,root) %{_sbindir}/file2sock
+%attr(755,root,root) %{_sbindir}/log2ndo
 %attr(755,root,root) %{_sbindir}/ndo2db
+%attr(755,root,root) %{_sbindir}/sockdebug
+
+%attr(755,root,root) %{_libdir}/ndomod.o
