@@ -6,17 +6,15 @@
 %bcond_without	mysql	# build without mysql support
 %bcond_without	ssl	# build without ssl support
 
-%define		extraver	b9
-%define		rel		0.5
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
-Version:	1.4
-Release:	0.%{extraver}.%{rel}
+Version:	1.5
+Release:	0.1
 License:	GPL v2
 Group:		Networking
-Source0:	http://downloads.sourceforge.net/nagios/ndoutils-%{version}%{extraver}.tar.gz
-# Source0-md5:	659b759a5eb54b84eb44a29f26b603bc
+Source0:	http://downloads.sourceforge.net/nagios/ndoutils-1-5.tar.gz
+# Source0-md5:	5503e23c9b172a9d77f9b12190ff0dfb
 Source1:	ndo2db.init
 Patch0:		config.patch
 URL:		http://sourceforge.net/projects/nagios/
@@ -43,7 +41,7 @@ informacje o stanie i zdarzeniach z Nagiosa do bazy danych w celu
 późniejszego odczytu i przetwarzania.
 
 %prep
-%setup -q -n ndoutils-%{version}%{extraver}
+%setup -q -n ndoutils-1-5
 %patch0 -p1
 
 # some typo ;)
@@ -57,7 +55,7 @@ grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
 	--bindir=%{_sbindir} \
 	--localstatedir=/var/lib/nagios \
 	--with-init-dir=/etc/rc.d/init.d
-%{__make} -j1
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -96,7 +94,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README REQUIREMENTS TODO UPGRADING
+%doc README REQUIREMENTS TODO UPGRADING db
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndo2db.cfg
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndomod-load.cfg
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndomod.cfg
