@@ -7,8 +7,6 @@
 # description:	Nagios Data Out Daemon
 #
 # processname:	ndo2db
-# config:
-# pidfile:
 
 ### BEGIN INIT INFO
 # Provides:          ndo2db
