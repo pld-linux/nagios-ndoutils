@@ -10,7 +10,7 @@ Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-ndoutils
 Version:	1.5
-Release:	0.1
+Release:	1
 License:	GPL v2
 Group:		Networking
 Source0:	http://downloads.sourceforge.net/nagios/ndoutils-1-5.tar.gz
