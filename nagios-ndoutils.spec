@@ -1,5 +1,4 @@
 # TODO
-# - add db/{installdb,upgradedb} (Perl) somewhere
 # - ndo2db is unable to start, if there's stale socket:
 #   srwxr-xr-x 1 nagios nagios 0 Jan 15  2012 /var/lib/nagios/ndo.sock=
 #
@@ -64,7 +63,7 @@ grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_sysconfdir},%{_sbindir}}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_sysconfdir},%{_sbindir},%{_datadir}/%{addon}}
 
 %{__make} fullinstall \
 	INSTALL_OPTS="" \
@@ -84,6 +83,9 @@ done
 echo 'broker_module=%{_libdir}/ndomod.o config_file=%{_sysconfdir}/ndomod.cfg' \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/ndomod-load.cfg
 
+install -d $RPM_BUILD_ROOT%{_datadir}/%{addon}
+cp -a db/* $RPM_BUILD_ROOT%{_datadir}/%{addon}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -99,7 +101,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README REQUIREMENTS TODO UPGRADING db
+%doc README REQUIREMENTS TODO UPGRADING
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndo2db.cfg
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndomod-load.cfg
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ndomod.cfg
@@ -108,5 +110,11 @@ fi
 %attr(755,root,root) %{_sbindir}/log2ndo
 %attr(755,root,root) %{_sbindir}/ndo2db
 %attr(755,root,root) %{_sbindir}/sockdebug
-
 %attr(755,root,root) %{_libdir}/ndomod.o
+%dir %{_datadir}/%{addon}
+%{_datadir}/%{addon}/README
+%{_datadir}/%{addon}/*.sql
+%{_datadir}/%{addon}/queries
+%attr(755,root,root) %{_datadir}/%{addon}/upgradedb
+%attr(755,root,root) %{_datadir}/%{addon}/installdb
+%attr(755,root,root) %{_datadir}/%{addon}/prepsql
