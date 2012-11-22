@@ -6,15 +6,16 @@
 %bcond_without	mysql	# build without mysql support
 %bcond_without	ssl	# build without ssl support
 
+%define		addon	ndoutils
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
-Name:		nagios-ndoutils
-Version:	1.5
+Name:		nagios-%{addon}
+Version:	1.5.2
 Release:	1
 License:	GPL v2
 Group:		Networking
-Source0:	http://downloads.sourceforge.net/nagios/ndoutils-1-5.tar.gz
-# Source0-md5:	5503e23c9b172a9d77f9b12190ff0dfb
+Source0:	http://downloads.sourceforge.net/nagios/%{addon}-%{version}.tar.gz
+# Source0-md5:	61460320d0deb8109e7e45e2b717ce1f
 Source1:	ndo2db.init
 Patch0:		config.patch
 URL:		http://sourceforge.net/projects/nagios/
@@ -41,7 +42,7 @@ informacje o stanie i zdarzeniach z Nagiosa do bazy danych w celu
 późniejszego odczytu i przetwarzania.
 
 %prep
-%setup -q -n ndoutils-1-5
+%setup -q -n %{addon}-%{version}
 %patch0 -p1
 
 # some typo ;)
@@ -49,12 +50,14 @@ grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
 
 %build
 %configure \
+	--bindir=%{_sbindir} \
+	--localstatedir=/var/lib/nagios \
+	--with-init-dir=/etc/rc.d/init.d \
 	%{?with_mysql:--enable-mysql} \
 	%{?with_pgsql:--enable-pgsql} \
 	%{?with_ssl:--enable-ssl} \
-	--bindir=%{_sbindir} \
-	--localstatedir=/var/lib/nagios \
-	--with-init-dir=/etc/rc.d/init.d
+	--enable-nanosleep \
+	%{nil}
 %{__make}
 
 %install
