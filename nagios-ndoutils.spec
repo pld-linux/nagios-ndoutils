@@ -1,5 +1,7 @@
 # TODO
 # - add db/{installdb,upgradedb} (Perl) somewhere
+# - ndo2db is unable to start, if there's stale socket:
+#   srwxr-xr-x 1 nagios nagios 0 Jan 15  2012 /var/lib/nagios/ndo.sock=
 #
 # Conditional build:
 %bcond_with	pgsql	# build without pgsql support (does not seem to work)
