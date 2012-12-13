@@ -39,6 +39,7 @@ fi
 # Set defaults
 configfile=/etc/nagios/ndo2db.cfg
 pidfile=/var/lib/nagios/ndo2db.pid
+socketfile=/var/lib/nagios/ndo.sock
 
 # Get service config - may override defaults
 [ -f /etc/sysconfig/ndo2db ] && . /etc/sysconfig/ndo2db
@@ -48,6 +49,10 @@ start() {
 	if [ -f /var/lock/subsys/ndo2db ]; then
 		msg_already_running "Nagios NDO2DB"
 		return
+	fi
+
+	if [ -e "$socketfile" ] ; then
+		rm "$socketfile"
 	fi
 
 	msg_starting "Nagios NDO2DB"
