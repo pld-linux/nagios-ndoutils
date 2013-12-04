@@ -19,6 +19,7 @@ Source0:	http://downloads.sourceforge.net/nagios/%{addon}-%{version}.tar.gz
 # Source0-md5:	61460320d0deb8109e7e45e2b717ce1f
 Source1:	ndo2db.init
 Patch0:		config.patch
+Patch1:		format-security.patch
 URL:		http://sourceforge.net/projects/nagios/
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ssl:BuildRequires:	openssl-devel}
@@ -45,6 +46,7 @@ późniejszego odczytu i przetwarzania.
 %prep
 %setup -q -n %{addon}-%{version}
 %patch0 -p1
+%patch1 -p1
 
 # some typo ;)
 grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'

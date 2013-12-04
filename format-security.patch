@@ -1,0 +1,28 @@
+--- ndoutils-1.5.2/src/queue.c~	2012-06-07 12:21:50.000000000 +0200
++++ ndoutils-1.5.2/src/queue.c	2013-12-04 18:41:24.460952441 +0100
+@@ -77,7 +77,7 @@
+ 		if(msgctl(queue_id, IPC_STAT, &queue_stats)) {
+ 			sprintf(curstats, "Unable to determine current message queue usage: error reading IPC_STAT: %d", errno);
+ 			sprintf(logmsg, logfmt, curstats);
+-			syslog(LOG_ERR, logmsg);
++			syslog(LOG_ERR, "%s", logmsg);
+ 			}
+ 		else {
+ #if defined( __linux__)
+@@ -86,14 +86,14 @@
+ 			if( msgmni < 0) {
+ 				sprintf(curstats, "Unable to determine current message queue usage: error reading IPC_INFO: %d", errno);
+ 				sprintf(logmsg, logfmt, curstats);
+-				syslog(LOG_ERR, logmsg);
++				syslog(LOG_ERR, "%s", logmsg);
+ 				}
+ 			else {
+ 				sprintf(curstats, statsfmt, queue_stats.msg_qnum, 
+ 						(unsigned long)msgmni, queue_stats.__msg_cbytes, 
+ 						queue_stats.msg_qbytes);
+ 				sprintf(logmsg, logfmt, curstats);
+-				syslog(LOG_ERR, logmsg);
++				syslog(LOG_ERR, "%s", logmsg);
+ 				}
+ #else
+ 			sprintf(logmsg, logfmt, "");
