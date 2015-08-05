@@ -25,7 +25,7 @@ URL:		http://sourceforge.net/projects/nagios/
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ssl:BuildRequires:	openssl-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
-BuildRequires:	rpmbuild(macros) >= 1.228
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires:	nagios >= 4.0
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
@@ -96,6 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add ndo2db
 %service ndo2db restart
+%service -q nagios restart
 
 %preun
 if [ "$1" = "0" ]; then
