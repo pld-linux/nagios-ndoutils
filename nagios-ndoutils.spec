@@ -26,7 +26,7 @@ URL:		http://sourceforge.net/projects/nagios/
 %{?with_ssl:BuildRequires:	openssl-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	rpmbuild(macros) >= 1.228
-Requires:	nagios >= 3.0
+Requires:	nagios >= 4.0
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
