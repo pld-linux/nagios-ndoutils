@@ -29,6 +29,7 @@ BuildRequires:	rpmbuild(macros) >= 1.228
 Requires:	nagios >= 4.0
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
+Suggests:	perl-DBD-mysql
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/nagios
