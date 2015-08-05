@@ -1,22 +1,23 @@
 # TODO
 # - ndo2db is unable to start, if there's stale socket:
 #   srwxr-xr-x 1 nagios nagios 0 Jan 15  2012 /var/lib/nagios/ndo.sock=
+# - enabling with ssl fails to build due conflicting headers for pqueue_*
 #
 # Conditional build:
 %bcond_with	pgsql	# build without pgsql support (does not seem to work)
 %bcond_without	mysql	# build without mysql support
-%bcond_without	ssl	# build without ssl support
+%bcond_with	ssl	# build without ssl support
 
 %define		addon	ndoutils
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-%{addon}
-Version:	1.5.2
+Version:	2.0.0
 Release:	1
 License:	GPL v2
 Group:		Networking
 Source0:	http://downloads.sourceforge.net/nagios/%{addon}-%{version}.tar.gz
-# Source0-md5:	61460320d0deb8109e7e45e2b717ce1f
+# Source0-md5:	93561584f0fa7582a795e795306a3b35
 Source1:	ndo2db.init
 Patch0:		config.patch
 Patch1:		format-security.patch
