@@ -47,8 +47,8 @@ późniejszego odczytu i przetwarzania.
 
 %prep
 %setup -q -n %{addon}-%{version}
-%patch0 -p1
-%patch1 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 
 # some typo ;)
 grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
