@@ -12,15 +12,14 @@
 Summary:	NDOUTILS (Nagios Data Output Utils) addon
 Summary(pl.UTF-8):	Dodatek NDOUTILS (Nagios Data Output Utils)
 Name:		nagios-%{addon}
-Version:	2.0.0
-Release:	3
+Version:	2.1.5
+Release:	1
 License:	GPL v2
 Group:		Networking
-Source0:	http://downloads.sourceforge.net/nagios/%{addon}-%{version}.tar.gz
-# Source0-md5:	93561584f0fa7582a795e795306a3b35
+Source0:	http://downloads.sourceforge.net/project/nagios/%{addon}-2.x/%{addon}-%{version}/%{addon}-%{version}.tar.gz
+# Source0-md5:	ba59812f8757dc3dcdd8dd353637d79b
 Source1:	ndo2db.init
 Patch0:		config.patch
-Patch1:		format-security.patch
 URL:		http://sourceforge.net/projects/nagios/
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ssl:BuildRequires:	openssl-devel}
@@ -48,7 +47,6 @@ późniejszego odczytu i przetwarzania.
 %prep
 %setup -q -n %{addon}-%{version}
 %patch -P0 -p1
-%patch -P1 -p1
 
 # some typo ;)
 grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
@@ -63,13 +61,13 @@ grep -r 20052-2009 -l . | xargs sed -i -e 's,20052-2009,2005-2009,'
 	%{?with_ssl:--enable-ssl} \
 	--enable-nanosleep \
 	%{nil}
-%{__make}
+%{__make} all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_sysconfdir},%{_sbindir},%{_datadir}/%{addon}}
+install -d $RPM_BUILD_ROOT{%{_libdir},%{_sysconfdir},%{_sbindir},%{_datadir}/%{addon},/etc/rc.d/init.d}
 
-%{__make} fullinstall \
+%{__make} install install-config \
 	INSTALL_OPTS="" \
 	INIT_OPTS="" \
 	DESTDIR=$RPM_BUILD_ROOT
